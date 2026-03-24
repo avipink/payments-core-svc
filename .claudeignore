@@ -1,0 +1,56 @@
+# Gradle build artifacts
+build/
+.gradle/
+out/
+bin/
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+
+# Compiled classes
+*.class
+*.jar
+*.war
+
+# Generated code
+generated/
+generated-sources/
+**/build/generated/
+
+# Test reports (large HTML/XML, not source code)
+**/build/reports/
+**/build/test-results/
+
+# Dependency caches
+node_modules/
+.m2/
+
+# Git internals
+.git/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Environment and secrets
+.env
+.env.local
+*.key
+*.pem
+
+# Docker build context (if large)
+docker/volumes/
+
+# Kotlin specific
+.kotlin/
