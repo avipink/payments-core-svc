@@ -3,6 +3,7 @@ package com.digitalbank.payments.exception
 import com.digitalbank.contracts.common.ApiError
 import com.digitalbank.contracts.payments.PaymentError
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.MissingRequestHeaderException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import java.time.Instant
@@ -41,6 +42,41 @@ class GlobalExceptionHandler {
                     timestamp = timestamp
                 )
             )
+            is PaymentError.ValidationFailed -> ResponseEntity.status(400).body(
+                ApiError(
+                    code = "VALIDATION_FAILED",
+                    message = error.fieldErrors.entries.joinToString("; ") { (field, msg) -> "$field: $msg" },
+                    traceId = traceId,
+                    timestamp = timestamp
+                )
+            )
+            is PaymentError.IdempotencyKeyReused -> ResponseEntity.status(409).body(
+                ApiError(
+                    code = "IDEMPOTENCY_KEY_REUSED",
+                    message = "Idempotency key '${error.key}' was previously used with a different payload",
+                    traceId = traceId,
+                    timestamp = timestamp
+                )
+            )
+            is PaymentError.CurrencyMismatch -> ResponseEntity.status(422).body(
+                ApiError(
+                    code = "CURRENCY_MISMATCH",
+                    message = "Request currency ${error.requested} does not match source account currency ${error.accountCurrency}",
+                    traceId = traceId,
+                    timestamp = timestamp
+                )
+            )
         }
     }
+
+    @ExceptionHandler(MissingRequestHeaderException::class)
+    fun handleMissingHeader(ex: MissingRequestHeaderException): ResponseEntity<ApiError> =
+        ResponseEntity.status(400).body(
+            ApiError(
+                code = "MISSING_HEADER",
+                message = "Required header '${ex.headerName}' is missing",
+                traceId = UUID.randomUUID().toString(),
+                timestamp = Instant.now().toString()
+            )
+        )
 }
