@@ -1,6 +1,7 @@
 package com.digitalbank.payments.repository
 
 import com.digitalbank.contracts.common.MonetaryAmount
+import com.digitalbank.contracts.payments.PaymentResponse
 import com.digitalbank.contracts.payments.PaymentStatus
 import com.digitalbank.contracts.payments.PaymentType
 import com.digitalbank.payments.domain.Payment
@@ -77,4 +78,23 @@ class PaymentRepository {
             .fold(BigDecimal.ZERO) { acc, p -> acc + BigDecimal(p.amount.amount) }
 
     fun nextId(): String = "PAY-${String.format("%03d", payments.size + 1)}"
+
+    // ---------------------------------------------------------------------------
+    // Idempotency store
+    //
+    // Keyed by "{idempotencyKey}:{fromAccountId}" to prevent cross-account key
+    // collisions. Value is Pair<payloadHash, PaymentResponse> — the hash is used
+    // to detect same-key-different-payload conflicts (IdempotencyKeyReused).
+    //
+    // Thread-safety note: this store has the same non-atomic race condition as
+    // getDailyTotal() + save(). Acceptable for the in-memory MVP (C8/C9).
+    // ---------------------------------------------------------------------------
+    private val idempotencyStore: MutableMap<String, Pair<Int, PaymentResponse>> = mutableMapOf()
+
+    fun findByIdempotencyKey(compositeKey: String): Pair<Int, PaymentResponse>? =
+        idempotencyStore[compositeKey]
+
+    fun storeIdempotency(compositeKey: String, payloadHash: Int, response: PaymentResponse) {
+        idempotencyStore[compositeKey] = Pair(payloadHash, response)
+    }
 }
