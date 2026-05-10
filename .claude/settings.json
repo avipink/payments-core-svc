@@ -10,7 +10,25 @@
       "Read(gradle/wrapper/gradle-wrapper.jar)",
       "Read(**/*.hprof)",
       "Read(**/hs_err_pid*)",
-      "Read(local.properties)"
+      "Read(local.properties)",
+      "Read(**/*.iml)",
+      "Read(**/*.ipr)",
+      "Read(**/*.iws)",
+      "Read(**/*.class)",
+      "Read(**/*.jar)",
+      "Read(**/*.war)",
+      "Read(**/*.log)",
+      "Read(logs/**)",
+      "Read(.env)",
+      "Read(.env.local)",
+      "Read(**/*.key)",
+      "Read(**/*.pem)",
+      "Read(.DS_Store)",
+      "Read(Thumbs.db)",
+      "Read(.vscode/**)",
+      "Read(.settings/**)",
+      "Read(.project)",
+      "Read(.classpath)"
     ]
   }
 }
