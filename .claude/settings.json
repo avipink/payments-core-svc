@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(bin/**)",
+      "Read(build/**)",
+      "Read(.gradle/**)",
+      "Read(.kotlin/**)",
+      "Read(out/**)",
+      "Read(.idea/**)",
+      "Read(gradle/wrapper/gradle-wrapper.jar)",
+      "Read(**/*.hprof)",
+      "Read(**/hs_err_pid*)",
+      "Read(local.properties)"
+    ]
+  }
+}
